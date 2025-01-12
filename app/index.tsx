@@ -1,19 +1,16 @@
 // import { StatusBar } from "expo-status-bar";
-import { StyleSheet, TextInput, View, ScrollView } from "react-native";
+import { StyleSheet, TextInput, View, Text, ScrollView, FlatList } from "react-native";
 import { theme } from "../theme";
 import { ShoppingListItem } from "../components/ShoppingListItem";
 import { useState } from "react";
 
-const initilalList = [
-  {id: '1', name: 'Coffee'},
-  {id: '2', name: 'Tea'},
-  {id: '3', name: 'Sugar'},
-  {id: '4', name: 'Cheese'},
-];
+type ShoppingListItemType = {
+  name: string;
+};
 
 export default function App() {
   const [value, setValue] = useState("");
-  const [shoppingList, setShoppingList] = useState(initilalList);
+  const [shoppingList, setShoppingList] = useState<ShoppingListItemType[]>([]);
   const handleSubmit = () => {
     if (value) {
       const newShoppingList = [
@@ -26,23 +23,28 @@ export default function App() {
   };
 
   return (
-    <ScrollView 
+    <FlatList
+      data={shoppingList}
       style={styles.container}
       contentContainerStyle={styles.contentContainerStyle}
       stickyHeaderIndices={[0]}
-    >
-      <TextInput 
-        placeholder="E.g. Coffee" 
-        style={styles.textInput}
-        value={value}
-        onChangeText={setValue}
-        returnKeyType={"done"}
-        onSubmitEditing={handleSubmit}
-      />
-      {shoppingList.map((item) => (
-        <ShoppingListItem key={item.id} name={item.name}/>
-      ))}
-    </ScrollView>
+      ListEmptyComponent={
+        <View style={styles.listEmptyContainer}>
+          <Text>Your shopping list is empty!</Text>
+        </View>
+      }
+      ListHeaderComponent={
+        <TextInput 
+            placeholder="E.g. Coffee" 
+            style={styles.textInput}
+            value={value}
+            onChangeText={setValue}
+            returnKeyType={"done"}
+            onSubmitEditing={handleSubmit}
+        />
+      }
+      renderItem={({item}) => <ShoppingListItem name={item.name} />}
+    />
   );
 }
 
@@ -63,5 +65,11 @@ const styles = StyleSheet.create({
     margin: 12,
     fontSize: 16,
     borderRadius: 8,
-  }
+  },
+  listEmptyContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding:20,
+    marginVertical: 18,
+  },
 });
