@@ -5,12 +5,14 @@ import { ShoppingListItem } from "../components/ShoppingListItem";
 import { useState } from "react";
 
 type ShoppingListItemType = {
+  id: string;
   name: string;
 };
 
 export default function App() {
   const [value, setValue] = useState("");
   const [shoppingList, setShoppingList] = useState<ShoppingListItemType[]>([]);
+  
   const handleSubmit = () => {
     if (value) {
       const newShoppingList = [
@@ -21,6 +23,11 @@ export default function App() {
       setValue("");
     }
   };
+  
+  const handleDelete = (id: string) => {
+    const newShoppingList = shoppingList.filter((item) => item.id !== id);
+    setShoppingList(newShoppingList);
+  } 
 
   return (
     <FlatList
@@ -43,7 +50,12 @@ export default function App() {
             onSubmitEditing={handleSubmit}
         />
       }
-      renderItem={({item}) => <ShoppingListItem name={item.name} />}
+      renderItem={({item}) => (
+        <ShoppingListItem 
+          name={item.name} 
+          onDelete={() => handleDelete(item.id)} 
+        />
+      )}
     />
   );
 }
