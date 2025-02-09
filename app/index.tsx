@@ -8,6 +8,7 @@ type ShoppingListItemType = {
   id: string;
   name: string;
   completedAtTimestamp?: number;
+  lastUpdatedTimestamp: number;
 };
 
 export default function App() {
@@ -17,7 +18,11 @@ export default function App() {
   const handleSubmit = () => {
     if (value) {
       const newShoppingList = [
-        {id: new Date().toTimeString(), name: value},
+        {
+          id: new Date().toTimeString(), 
+          name: value, 
+          lastUpdatedTimestamp: Date.now(),
+        },
         ...shoppingList,
       ];
       setShoppingList(newShoppingList);
@@ -35,6 +40,7 @@ export default function App() {
       if (item.id === id) {
         return {
           ...item,
+          lastUpdatedTimestamp: Date.now(),
           completedAtTimestamp: item.completedAtTimestamp
           ? undefined
           : Date.now(),
@@ -47,7 +53,7 @@ export default function App() {
 
   return (
     <FlatList
-      data={shoppingList}
+      data={orderShoppingList(shoppingList)}
       style={styles.container}
       contentContainerStyle={styles.contentContainerStyle}
       stickyHeaderIndices={[0]}
@@ -76,6 +82,40 @@ export default function App() {
       )}
     />
   );
+}
+
+function orderShoppingList(shoppingList: ShoppingListItemType[]) {
+  return shoppingList.sort((item1, item2) => {
+    // If both items have been completed, compare their timestamps
+    // This uses the form numbers.sort((a, b) => b - a) for descending order
+    // When a positive number is returned, the item with the larger timestamp (more recent completion) comes first
+    if (item1.completedAtTimestamp && item2.completedAtTimestamp) {
+      return item2.completedAtTimestamp - item1.completedAtTimestamp;
+    }
+    // If only the first item has been completed
+    // A positive number is returned
+    // The first item should come after the second
+    // The completed item goes under the uncompleted one
+    if (item1.completedAtTimestamp && !item2.completedAtTimestamp) {
+      return 1;
+    }
+    // If only the second item has been completed
+    // A negative number is returned
+    // The first item should come before the second
+     // The uncompleted item goes before the completed one
+    if (!item1.completedAtTimestamp && item2.completedAtTimestamp) {
+      return -1;
+    }
+
+    // If both items are uncompleted, compare their lastUpdatedTimestamp
+    // This uses the form numbers.sort((a, b) => b - a) for descending order
+    // When a positive number is returned, the item with the larger timestamp (most recent update) comes first
+    if (!item1.completedAtTimestamp && !item2.completedAtTimestamp) {
+      return item2.lastUpdatedTimestamp - item1.lastUpdatedTimestamp;
+    }
+
+    return 0;
+  });
 }
 
 const styles = StyleSheet.create({
