@@ -1,9 +1,24 @@
 // import { StatusBar } from "expo-status-bar";
-import { StyleSheet, TextInput, View, Text, ScrollView, FlatList } from "react-native";
+import {
+  LayoutAnimation,
+  Platform,
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  UIManager,
+  FlatList,
+} from "react-native";
 import { theme } from "../theme";
 import { ShoppingListItem } from "../components/ShoppingListItem";
 import { useEffect, useState } from "react";
 import { getFromStorage, saveToStorage } from "../utils/storage";
+
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
 
 const storageKey = "shopping-list";
 
@@ -22,34 +37,37 @@ export default function App() {
     const fetchInitialData = async () => {
       const data = await getFromStorage(storageKey);
       if (data) {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setShoppingList(data);
       }
     };
     fetchInitialData();
   }, []);
-  
+
   const handleSubmit = () => {
     if (value) {
       const newShoppingList = [
         {
-          id: new Date().toTimeString(), 
-          name: value, 
+          id: new Date().toTimeString(),
+          name: value,
           lastUpdatedTimestamp: Date.now(),
         },
         ...shoppingList,
       ];
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setShoppingList(newShoppingList);
       saveToStorage(storageKey, newShoppingList);
       setValue("");
     }
   };
-  
+
   const handleDelete = (id: string) => {
     const newShoppingList = shoppingList.filter((item) => item.id !== id);
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShoppingList(newShoppingList);
     saveToStorage(storageKey, newShoppingList);
   };
-  
+
   const handleToggleComplete = (id: string) => {
     const newShoppingList = shoppingList.map((item) => {
       if (item.id === id) {
@@ -57,12 +75,13 @@ export default function App() {
           ...item,
           lastUpdatedTimestamp: Date.now(),
           completedAtTimestamp: item.completedAtTimestamp
-          ? undefined
-          : Date.now(),
-        }      
+            ? undefined
+            : Date.now(),
+        }
       }
       return item;
     });
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShoppingList(newShoppingList);
     saveToStorage(storageKey, newShoppingList);
   };
@@ -79,19 +98,19 @@ export default function App() {
         </View>
       }
       ListHeaderComponent={
-        <TextInput 
-            placeholder="E.g. Coffee" 
-            style={styles.textInput}
-            value={value}
-            onChangeText={setValue}
-            returnKeyType={"done"}
-            onSubmitEditing={handleSubmit}
+        <TextInput
+          placeholder="E.g. Coffee"
+          style={styles.textInput}
+          value={value}
+          onChangeText={setValue}
+          returnKeyType={"done"}
+          onSubmitEditing={handleSubmit}
         />
       }
-      renderItem={({item}) => (
-        <ShoppingListItem 
-          name={item.name} 
-          onDelete={() => handleDelete(item.id)} 
+      renderItem={({ item }) => (
+        <ShoppingListItem
+          name={item.name}
+          onDelete={() => handleDelete(item.id)}
           onToggleComplete={() => handleToggleComplete(item.id)}
           isCompleted={Boolean(item.completedAtTimestamp)}
         />
@@ -118,7 +137,7 @@ function orderShoppingList(shoppingList: ShoppingListItemType[]) {
     // If only the second item has been completed
     // A negative number is returned
     // The first item should come before the second
-     // The uncompleted item goes before the completed one
+    // The uncompleted item goes before the completed one
     if (!item1.completedAtTimestamp && item2.completedAtTimestamp) {
       return -1;
     }
@@ -155,7 +174,7 @@ const styles = StyleSheet.create({
   listEmptyContainer: {
     justifyContent: "center",
     alignItems: "center",
-    padding:20,
+    padding: 20,
     marginVertical: 18,
   },
 });
