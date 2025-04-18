@@ -16,7 +16,7 @@ import { getFromStorage, saveToStorage } from "../utils/storage";
 import * as Haptics from "expo-haptics";
 // import { Vibration } from "react-native";
 
-if (Platform.OS === 'android') {
+if (Platform.OS === "android") {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
@@ -77,8 +77,7 @@ export default function App() {
       if (item.id === id) {
         if (item.completedAtTimestamp) {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-        }
-        else {
+        } else {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           // Vibration.vibrate(200);
         }
@@ -88,7 +87,7 @@ export default function App() {
           completedAtTimestamp: item.completedAtTimestamp
             ? undefined
             : Date.now(),
-        }
+        };
       }
       return item;
     });

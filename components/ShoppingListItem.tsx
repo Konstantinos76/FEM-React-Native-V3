@@ -1,17 +1,29 @@
-import { View, StyleSheet, Text, TouchableOpacity, Alert, Pressable } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Alert,
+  Pressable,
+} from "react-native";
 import { theme } from "../theme";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Entypo from '@expo/vector-icons/Entypo';
+import Entypo from "@expo/vector-icons/Entypo";
 // import * as Haptics from "expo-haptics";
 
 type Props = {
   name: string;
   isCompleted?: boolean;
-  onDelete:() => void;
-  onToggleComplete:() => void;
+  onDelete: () => void;
+  onToggleComplete: () => void;
 };
 
-export function ShoppingListItem({ name, isCompleted, onDelete, onToggleComplete }: Props) {
+export function ShoppingListItem({
+  name,
+  isCompleted,
+  onDelete,
+  onToggleComplete,
+}: Props) {
   const handleDelete = () => {
     // Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Alert.alert(
@@ -39,10 +51,11 @@ export function ShoppingListItem({ name, isCompleted, onDelete, onToggleComplete
       ]}
     >
       <View style={styles.checkRow}>
-        <Entypo 
-          name={isCompleted ? "check" : "circle"} 
-          size={24} 
-          color={isCompleted ? theme.colorGray : theme.colorCerulean} />
+        <Entypo
+          name={isCompleted ? "check" : "circle"}
+          size={24}
+          color={isCompleted ? theme.colorGray : theme.colorCerulean}
+        />
         <Text
           numberOfLines={1}
           style={[
@@ -87,8 +100,8 @@ const styles = StyleSheet.create({
     color: theme.colorGray,
   },
   checkRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
     flex: 1,
-  }
+  },
 });
