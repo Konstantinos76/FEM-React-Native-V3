@@ -1,12 +1,9 @@
 // import { StatusBar } from "expo-status-bar";
 import {
-  LayoutAnimation,
-  Platform,
   StyleSheet,
   TextInput,
   View,
   Text,
-  UIManager,
   FlatList,
 } from "react-native";
 import { theme } from "../theme";
@@ -14,13 +11,8 @@ import { ShoppingListItem } from "../components/ShoppingListItem";
 import { useEffect, useState } from "react";
 import { getFromStorage, saveToStorage } from "../utils/storage";
 import * as Haptics from "expo-haptics";
+import Animated, { LinearTransition, Easing, FadeInLeft, FadeOutRight } from "react-native-reanimated";
 // import { Vibration } from "react-native";
-
-if (Platform.OS === "android") {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-}
 
 const storageKey = "shopping-list";
 
@@ -35,11 +27,12 @@ export default function App() {
   const [value, setValue] = useState("");
   const [shoppingList, setShoppingList] = useState<ShoppingListItemType[]>([]);
 
+
   useEffect(() => {
     const fetchInitialData = async () => {
       const data = await getFromStorage(storageKey);
       if (data) {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setShoppingList(data);
       }
     };
@@ -56,7 +49,7 @@ export default function App() {
         },
         ...shoppingList,
       ];
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setShoppingList(newShoppingList);
       saveToStorage(storageKey, newShoppingList);
       setValue("");
@@ -65,7 +58,7 @@ export default function App() {
 
   const handleDelete = (id: string) => {
     const newShoppingList = shoppingList.filter((item) => item.id !== id);
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     // Vibration.vibrate(100);
     setShoppingList(newShoppingList);
@@ -91,13 +84,13 @@ export default function App() {
       }
       return item;
     });
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    // LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShoppingList(newShoppingList);
     saveToStorage(storageKey, newShoppingList);
   };
 
   return (
-    <FlatList
+    <Animated.FlatList
       data={orderShoppingList(shoppingList)}
       style={styles.container}
       contentContainerStyle={styles.contentContainerStyle}
@@ -118,13 +111,20 @@ export default function App() {
         />
       }
       renderItem={({ item }) => (
-        <ShoppingListItem
-          name={item.name}
-          onDelete={() => handleDelete(item.id)}
-          onToggleComplete={() => handleToggleComplete(item.id)}
-          isCompleted={Boolean(item.completedAtTimestamp)}
-        />
+        <Animated.View 
+          entering={FadeInLeft.duration(500).easing(Easing.ease)} 
+          exiting={FadeOutRight.duration(300).easing(Easing.ease)}
+          layout={LinearTransition}
+        >
+          <ShoppingListItem
+            name={item.name}
+            onDelete={() => handleDelete(item.id)}
+            onToggleComplete={() => handleToggleComplete(item.id)}
+            isCompleted={Boolean(item.completedAtTimestamp)}
+          />
+        </Animated.View>
       )}
+      itemLayoutAnimation={LinearTransition}
     />
   );
 }

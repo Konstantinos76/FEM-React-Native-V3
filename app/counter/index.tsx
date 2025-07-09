@@ -1,11 +1,34 @@
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { theme } from "../../theme";
 import { registerForPushNotificationsAsync } from "../../utils/registerForPushNotificationsAsync";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+import { useState } from "react";
 
 export default function CounterScreen() {
-  const handleRequestPermission = async () => {
+  const [secondsElapsed, setsecondsElapsed] = useState(0);
+  
+  const scheduleNotification = async () => {
     const result = await registerForPushNotificationsAsync();
-    console.log("Permission: ", result);
+    if (result === "granted") {
+      console.log("Permission: ", result);
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "I am a notification from your app!"
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: 5,
+        },
+      });
+    } else {
+      if (Device.isDevice) {
+        Alert.alert(
+          "Unable to schedule notification",
+          "Enable the notification permission for this app in settings",
+        );
+      }
+    }
   };
 
   return (
@@ -13,9 +36,9 @@ export default function CounterScreen() {
       <TouchableOpacity
         style={styles.button}
         activeOpacity={0.8}
-        onPress={handleRequestPermission}
+        onPress={scheduleNotification}
       >
-        <Text style={styles.buttonText}>Request Permission</Text>
+        <Text style={styles.buttonText}>Schedule Notification</Text>
       </TouchableOpacity>
       <Text style={styles.text}>Counter</Text>
     </View>
