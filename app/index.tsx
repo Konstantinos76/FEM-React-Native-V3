@@ -1,17 +1,16 @@
 // import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  TextInput,
-  View,
-  Text,
-  FlatList,
-} from "react-native";
+import { StyleSheet, TextInput, View, Text, FlatList } from "react-native";
 import { theme } from "../theme";
 import { ShoppingListItem } from "../components/ShoppingListItem";
 import { useEffect, useState } from "react";
 import { getFromStorage, saveToStorage } from "../utils/storage";
 import * as Haptics from "expo-haptics";
-import Animated, { LinearTransition, Easing, FadeInLeft, FadeOutRight } from "react-native-reanimated";
+import Animated, {
+  LinearTransition,
+  Easing,
+  FadeInLeft,
+  FadeOutRight,
+} from "react-native-reanimated";
 // import { Vibration } from "react-native";
 
 const storageKey = "shopping-list";
@@ -26,7 +25,6 @@ type ShoppingListItemType = {
 export default function App() {
   const [value, setValue] = useState("");
   const [shoppingList, setShoppingList] = useState<ShoppingListItemType[]>([]);
-
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -111,8 +109,8 @@ export default function App() {
         />
       }
       renderItem={({ item }) => (
-        <Animated.View 
-          entering={FadeInLeft.duration(500).easing(Easing.ease)} 
+        <Animated.View
+          entering={FadeInLeft.duration(500).easing(Easing.ease)}
           exiting={FadeOutRight.duration(300).easing(Easing.ease)}
           layout={LinearTransition}
         >
