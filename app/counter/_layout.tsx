@@ -1,6 +1,9 @@
 import { Link, Stack } from "expo-router";
-import { Pressable } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Pressable, StyleSheet, Text } from "react-native";
+// import FontAwesome from "@expo/vector-icons/FontAwesome";
+// import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+// import Fontisto from '@expo/vector-icons/Fontisto';
+
 import { theme } from "../../theme";
 
 export default function Layout() {
@@ -13,12 +16,8 @@ export default function Layout() {
           headerRight: () => {
             return (
               <Link href="/counter/history" asChild>
-                <Pressable hitSlop={40}>
-                  <FontAwesome
-                    name="history"
-                    size={24}
-                    color={theme.colorGray}
-                  />
+                <Pressable hitSlop={20}>
+                  <Text>History</Text>
                 </Pressable>
               </Link>
             );
