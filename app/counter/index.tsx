@@ -11,8 +11,8 @@ import { getFromStorage, saveToStorage } from "../../utils/storage";
 import * as Haptics from "expo-haptics";
 import ConfettiCannon from "react-native-confetti-cannon";
 
-// This is 10 seconds in ms
-const frequency = 10 * 1000;
+// 2 Weeks in milliseconds
+const frequency = 14 * 24 * 60 * 60 * 1000;
 
 export const countdownStorageKey = "taskly-countdown";
 
@@ -92,7 +92,7 @@ export default function CounterScreen() {
       console.log("Permission: ", result);
       pushNotificationId = await Notifications.scheduleNotificationAsync({
         content: {
-          title: "The thing is due!",
+          title: "Time to wash your car! 🧼🚗",
         },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
@@ -138,12 +138,9 @@ export default function CounterScreen() {
       ]}
     >
       {status.isOverdue ? (
-        <Text style={[styles.heading, styles.whiteText]}>
-          {" "}
-          Thing overdue by{" "}
-        </Text>
+        <Text style={[styles.heading, styles.whiteText]}>Car wash overdue by </Text>
       ) : (
-        <Text style={styles.heading}> Thing due in </Text>
+        <Text style={styles.heading}> Car wash due in </Text>
       )}
       <View style={styles.row}>
         <TimeSegment
@@ -172,7 +169,7 @@ export default function CounterScreen() {
         activeOpacity={0.8}
         onPress={scheduleNotification}
       >
-        <Text style={styles.buttonText}>I've done the thing!</Text>
+        <Text style={styles.buttonText}>I've washed the car!</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.button, { marginTop: 24 }]}
