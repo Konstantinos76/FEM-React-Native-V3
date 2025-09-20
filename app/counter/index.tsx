@@ -1,13 +1,15 @@
-import { Text, View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, useWindowDimensions } from "react-native";
 import { theme } from "../../theme";
 import { registerForPushNotificationsAsync } from "../../utils/registerForPushNotificationsAsync";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Duration, isBefore, intervalToDuration, set } from "date-fns";
 import { TimeSegment } from "../../components/TimeSegment";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getFromStorage, saveToStorage } from "../../utils/storage";
+import * as Haptics from "expo-haptics";
+import ConfettiCannon from "react-native-confetti-cannon";
 
 // This is 10 seconds in ms
 const frequency = 10 * 1000;
@@ -25,6 +27,8 @@ type CountdownStatus = {
 };
 
 export default function CounterScreen() {
+  const { width } = useWindowDimensions();
+  const confettiRef = useRef<any>(null);
   const [countdownState, setCountdownState] =
     useState<PersistedCountdownState>();
   const [status, setStatus] = useState<CountdownStatus>({
@@ -80,6 +84,8 @@ export default function CounterScreen() {
   }, []);
 
   const scheduleNotification = async () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    confettiRef?.current?.start();
     let pushNotificationId;
     const result = await registerForPushNotificationsAsync();
     if (result === "granted") {
@@ -175,6 +181,13 @@ export default function CounterScreen() {
       >
         <Text style={styles.buttonText}>Clear Countdown Storage</Text>
       </TouchableOpacity>
+      <ConfettiCannon 
+        ref={confettiRef}
+        count={100}
+        origin={{ x: width / 2, y: -20 }}
+        fadeOut={true}
+        autoStart={false}
+      />
     </View>
   );
 }

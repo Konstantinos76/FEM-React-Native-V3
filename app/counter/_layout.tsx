@@ -16,7 +16,7 @@ export default function Layout() {
           headerRight: () => {
             return (
               <Link href="/counter/history" asChild>
-                <Pressable hitSlop={20}>
+                <Pressable hitSlop={40}>
                   <Text>History</Text>
                 </Pressable>
               </Link>
